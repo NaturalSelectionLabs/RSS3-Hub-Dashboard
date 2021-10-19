@@ -1,0 +1,16 @@
+{
+    "root": "dist/",
+    "https_only": true,
+    "error_page": "index.html",
+    "headers": {
+        "/js/*": {
+            "Cache-Control": "public, max-age=86400"
+        },
+        "/css/*": {
+            "Cache-Control": "public, max-age=86400"
+        },
+        "/fonts/*": {
+            "Cache-Control": "public, max-age=86400"
+        }
+    }
+}
