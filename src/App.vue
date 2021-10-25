@@ -34,6 +34,10 @@
       </el-card>
     </el-col>
   </el-row>
+  <v-chart class="chart" :option="echartsOptions" />
+  <div class="load-details">
+    <el-button type="primary" @click="loadDetails">Load Details ↓</el-button>
+  </div>
   <el-table
     stripe
     show-summary
@@ -81,8 +85,23 @@
 
 <script>
 import { nextTick } from 'vue'
-import { ElRow, ElCol, ElCard, ElTable, ElTableColumn, ElLoading } from 'element-plus'
+import { ElRow, ElCol, ElCard, ElTable, ElTableColumn, ElLoading, ElButton } from 'element-plus'
 import axios from 'axios'
+import { use } from "echarts/core";
+import { CanvasRenderer } from "echarts/renderers";
+import { LineChart } from "echarts/charts";
+import {
+  TooltipComponent,
+  GridComponent,
+} from "echarts/components";
+import VChart from "vue-echarts";
+
+use([
+  CanvasRenderer,
+  TooltipComponent,
+  LineChart,
+  GridComponent
+]);
 
 export default {
   name: 'App',
@@ -92,6 +111,8 @@ export default {
     ElCard,
     ElTable,
     ElTableColumn,
+    ElButton,
+    VChart,
   },
   data () {
     return {
@@ -102,19 +123,41 @@ export default {
         accounts: {}
       },
       details: [],
-      loading: null
+      loading: null,
+      echartsOptions: null,
     }
   },
   async mounted() {
     this.openLoading()
     this.overall = (await axios.get('https://raw.githubusercontent.com/NaturalSelectionLabs/RSS3-Hub-Next-Data/main/statistics/overall.json')).data
-    const detailsData = (await axios.get('https://raw.githubusercontent.com/NaturalSelectionLabs/RSS3-Hub-Next-Data/main/statistics/details.json')).data
-    this.details = Object.keys(detailsData).map((key) => ({
-      address: key,
-      ...detailsData[key]
-    }))
-    // .splice(0, 100)
-    await nextTick()
+
+    const history = (await axios.get('https://raw.githubusercontent.com/NaturalSelectionLabs/RSS3-Hub-Next-Data/main/statistics/history.json')).data
+    const historyData = Object.keys(history).map((key) => ([+new Date(key), history[key].count])).sort((a, b) => a[0] - b[0]);
+    this.echartsOptions = {
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'line',
+        }
+      },
+      xAxis: {
+        name: 'Time',
+        type: 'time',
+        min: historyData[0][0],
+      },
+      yAxis: {
+        name: 'Count',
+        min: historyData[0][1],
+      },
+      series: [
+        {
+          data: historyData,
+          type: 'line',
+          smooth: true
+        }
+      ]
+    };
+  
     this.closeLoading()
   },
   methods: {
@@ -146,6 +189,18 @@ export default {
     closeLoading() {
       this.loading.close()
       this.loading = null
+    },
+    async loadDetails() {
+      this.openLoading()
+      await nextTick()
+      const detailsData = (await axios.get('https://raw.githubusercontent.com/NaturalSelectionLabs/RSS3-Hub-Next-Data/main/statistics/details.json')).data
+      this.details = Object.keys(detailsData).map((key) => ({
+        address: key,
+        ...detailsData[key]
+      }))
+      .splice(0, 100)
+      await nextTick()
+      this.closeLoading()
     }
   }
 }
@@ -179,5 +234,15 @@ h1 {
 }
 .card-header {
   text-transform: capitalize;
+}
+
+.load-details {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.chart {
+  width: 100%;
+  height: 600px;
 }
 </style>
