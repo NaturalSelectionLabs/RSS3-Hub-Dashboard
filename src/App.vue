@@ -134,6 +134,12 @@ export default {
     const history = (await axios.get('https://raw.githubusercontent.com/NaturalSelectionLabs/RSS3-Hub-Next-Data/main/statistics/history.json')).data
     const historyData = Object.keys(history).map((key) => ([+new Date(key), history[key].count])).sort((a, b) => a[0] - b[0]);
     this.echartsOptions = {
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'line',
+        }
+      },
       xAxis: {
         name: 'Time',
         type: 'time',
