@@ -12,7 +12,7 @@
       </el-card>
     </el-col>
   </el-row>
-  <el-row :gutter="20" v-for="field in (['links', 'assets', 'accounts'])" :key="field">
+  <el-row :gutter="20" v-for="field in (['links', 'assets'/*, 'accounts'*/])" :key="field">
     <el-col :span="24 / (keys(overall[field]).length + 1)">
       <el-card class="box-card">
         <template #header>
@@ -35,9 +35,9 @@
     </el-col>
   </el-row>
   <v-chart class="chart" :option="echartsOptions" />
-  <div class="load-details">
+  <!-- <div class="load-details">
     <el-button type="primary" @click="loadDetails">Load Details ↓</el-button>
-  </div>
+  </div> -->
   <el-table
     stripe
     show-summary
@@ -51,7 +51,7 @@
     <el-table-column prop="name" label="Name" />
     <el-table-column prop="date_created" label="Date Created" sortable :formatter="dateFormatter" />
     <el-table-column prop="date_updated" label="Date Updated" sortable :formatter="dateFormatter" />
-    <el-table-column v-for="field in (['links', 'assets', 'accounts'])" :key="field" :label="field">
+    <el-table-column v-for="field in (['links', 'assets'/*, 'accounts'*/])" :key="field" :label="field">
       <el-table-column
         v-for="type in Object.keys(overall[field])"
         :key="type"
@@ -84,8 +84,8 @@
 </template>
 
 <script>
-import { nextTick } from 'vue'
-import { ElRow, ElCol, ElCard, ElTable, ElTableColumn, ElLoading, ElButton } from 'element-plus'
+// import { nextTick } from 'vue'
+import { ElRow, ElCol, ElCard, ElTable, ElTableColumn, ElLoading } from 'element-plus'
 import axios from 'axios'
 import { use } from "echarts/core";
 import { CanvasRenderer } from "echarts/renderers";
@@ -111,7 +111,6 @@ export default {
     ElCard,
     ElTable,
     ElTableColumn,
-    ElButton,
     VChart,
   },
   data () {
@@ -120,7 +119,7 @@ export default {
         count: 0,
         links: {},
         assets: {},
-        accounts: {}
+        // accounts: {}
       },
       details: [],
       loading: null,
@@ -129,9 +128,9 @@ export default {
   },
   async mounted() {
     this.openLoading()
-    this.overall = (await axios.get('https://raw.githubusercontent.com/NaturalSelectionLabs/RSS3-Hub-Next-Data/main/statistics/overall.json')).data
+    this.overall = (await axios.get('https://raw.githubusercontent.com/NaturalSelectionLabs/RSS3-PreNode-Data/main/statics/overall.json')).data
 
-    const history = (await axios.get('https://raw.githubusercontent.com/NaturalSelectionLabs/RSS3-Hub-Next-Data/main/statistics/history.json')).data
+    const history = (await axios.get('https://raw.githubusercontent.com/NaturalSelectionLabs/RSS3-PreNode-Data/main/statics/history.json')).data
     const historyData = Object.keys(history).map((key) => ([+new Date(key), history[key].count])).sort((a, b) => a[0] - b[0]);
     this.echartsOptions = {
       tooltip: {
@@ -189,18 +188,18 @@ export default {
       this.loading.close()
       this.loading = null
     },
-    async loadDetails() {
-      this.openLoading()
-      await nextTick()
-      const detailsData = (await axios.get('https://raw.githubusercontent.com/NaturalSelectionLabs/RSS3-Hub-Next-Data/main/statistics/details.json')).data
-      this.details = Object.keys(detailsData).map((key) => ({
-        address: key,
-        ...detailsData[key]
-      }))
-      .splice(0, 100)
-      await nextTick()
-      this.closeLoading()
-    }
+    // async loadDetails() {
+    //   this.openLoading()
+    //   await nextTick()
+    //   const detailsData = (await axios.get('https://raw.githubusercontent.com/NaturalSelectionLabs/RSS3-Hub-Next-Data/main/statistics/details.json')).data
+    //   this.details = Object.keys(detailsData).map((key) => ({
+    //     address: key,
+    //     ...detailsData[key]
+    //   }))
+    //   .splice(0, 100)
+    //   await nextTick()
+    //   this.closeLoading()
+    // }
   }
 }
 </script>
