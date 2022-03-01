@@ -1,11 +1,11 @@
 <template>
   <h1>RSS3 Dashboard</h1>
   <v-chart class="line-chart" :option="lineChartOptions" />
-  <el-row>
-    <el-col :span="12">
+  <el-row  justify="center">
+    <el-col :xs="24" :sm="12" >
       <v-chart class="pie-chart" :option="evmPieChartOptions" />
     </el-col>
-    <el-col :span="12">
+    <el-col :xs="24" :sm="12">
       <v-chart class="pie-chart" :option="linksChartOptions" />
       <!-- <div class="data-card">
           <h2>
@@ -176,6 +176,11 @@ export default {
         min: historyData[0][0],
       },
       yAxis: {
+        axisLabel:{
+          inside:true,
+          margin: 0,
+          verticalAlign: "bottom"
+        }
       },
       series: [
         {
@@ -248,7 +253,13 @@ export default {
         type: "time",
         min: historyData[0][0],
       },
-      yAxis: {},
+      yAxis: {
+        axisLabel:{
+          inside:true,
+          margin: 0,
+          verticalAlign: "bottom"
+        }
+      },
       series: [
         {
           name: "Links",
