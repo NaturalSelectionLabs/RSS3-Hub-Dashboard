@@ -164,8 +164,8 @@ export default {
         fontFamily: "RockwellStd",
       },
       title: {
-        text: "RSS3 Files",
-        subtext: "Current Count: " + this.overall.count,
+        text: "RSS3 Users",
+        subtext: "Current Total: " + this.overall.count,
         left: "center",
       },
       tooltip: {
@@ -175,9 +175,11 @@ export default {
         type: "time",
         min: historyData[0][0],
       },
-      yAxis: {},
+      yAxis: {
+      },
       series: [
         {
+          name: "Users",
           data: historyData,
           type: "line",
           symbol: "none",
@@ -249,6 +251,7 @@ export default {
       yAxis: {},
       series: [
         {
+          name: "Links",
           data: linksData,
           type: "line",
           symbol: "none",
