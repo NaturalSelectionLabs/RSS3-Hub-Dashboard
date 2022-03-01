@@ -1,20 +1,23 @@
 <template>
   <h1>RSS3 Dashboard</h1>
-    <v-chart class="line-chart" :option="lineChartOptions" />
-    <el-row>
-      <el-col :span="12">
-        <v-chart class="pie-chart" :option="evmPieChartOptions" />
-      </el-col>
-      <el-col :span="12">
-        <v-chart class="pie-chart" :option="linksChartOptions" />
-        <!-- <div class="data-card">
+  <v-chart class="line-chart" :option="lineChartOptions" />
+  <el-row>
+    <el-col :span="12">
+      <v-chart class="pie-chart" :option="evmPieChartOptions" />
+    </el-col>
+    <el-col :span="12">
+      <v-chart class="pie-chart" :option="linksChartOptions" />
+      <!-- <div class="data-card">
           <h2>
             Links
           </h2>
           <span>Current Total: {{overall.links.following}}</span>
         </div> -->
-      </el-col>
-    </el-row>
+    </el-col>
+  </el-row>
+  <el-row justify="center">
+    <el-button @click="handleClick">View Raw Statistics</el-button>
+  </el-row>
   <!-- <el-row>
     <el-col :span="24">
       <el-card class="box-card">
@@ -59,7 +62,6 @@
       </el-card>
     </el-col>
   </el-row> -->
-  
 
   <!-- <div class="load-details">
     <el-button type="primary" @click="loadDetails">Load Details ↓</el-button>
@@ -68,15 +70,30 @@
 
 <script>
 // import { nextTick } from 'vue'
-import { ElRow, ElCol, ElLoading } from "element-plus";
+import { ElRow, ElCol, ElLoading, ElButton } from "element-plus";
 import axios from "axios";
 import { use } from "echarts/core";
 import { CanvasRenderer } from "echarts/renderers";
 import { LineChart, PieChart } from "echarts/charts";
-import { TooltipComponent, GridComponent, PolarComponent,TitleComponent, LegendComponent } from "echarts/components";
+import {
+  TooltipComponent,
+  GridComponent,
+  PolarComponent,
+  TitleComponent,
+  LegendComponent,
+} from "echarts/components";
 import VChart from "vue-echarts";
 
-use([CanvasRenderer, TooltipComponent, LineChart, PieChart, GridComponent, PolarComponent,TitleComponent, LegendComponent]);
+use([
+  CanvasRenderer,
+  TooltipComponent,
+  LineChart,
+  PieChart,
+  GridComponent,
+  PolarComponent,
+  TitleComponent,
+  LegendComponent,
+]);
 
 export default {
   name: "App",
@@ -84,6 +101,7 @@ export default {
     ElRow,
     ElCol,
     VChart,
+    ElButton
   },
   data() {
     return {
@@ -97,7 +115,7 @@ export default {
       loading: null,
       lineChartOptions: null,
       evmPieChartOptions: null,
-      linksChartOptions: null
+      linksChartOptions: null,
     };
   },
   async mounted() {
@@ -135,29 +153,29 @@ export default {
     var evmData = [];
     for (const [key, value] of Object.entries(this.overall.assets["EVM+"])) {
       evmData.push({ value: value, name: key });
-    }    
+    }
 
     const linksData = Object.values(dailyMax)
       .map((key) => [+new Date(key), history[key].links.following])
       .sort((a, b) => a[0] - b[0]);
 
     this.lineChartOptions = {
-        title: {
-    text: 'RSS3 Files',
-    subtext: 'Current Count: '+this.overall.count,
-    left: 'center'
-  },
+      textStyle: {
+        fontFamily: "RockwellStd",
+      },
+      title: {
+        text: "RSS3 Files",
+        subtext: "Current Count: " + this.overall.count,
+        left: "center",
+      },
       tooltip: {
         trigger: "axis",
       },
       xAxis: {
-        name: "Date",
         type: "time",
         min: historyData[0][0],
       },
-      yAxis: {
-        name: "",
-      },
+      yAxis: {},
       series: [
         {
           data: historyData,
@@ -173,11 +191,14 @@ export default {
     };
 
     this.evmPieChartOptions = {
-              title: {
-    text: 'Assets',
-    subtext: 'Current Total: '+this.overall.assets.totalCount,
-    left: 'center'
-  },
+      textStyle: {
+        fontFamily: "RockwellStd",
+      },
+      title: {
+        text: "Assets",
+        subtext: "Current Total: " + this.overall.assets.totalCount,
+        left: "center",
+      },
       tooltip: {
         trigger: "item",
       },
@@ -185,7 +206,7 @@ export default {
         {
           name: "EVM+ Assets",
           type: "pie",
-                // radius: [100, 250],
+          // radius: [100, 250],
           radius: ["30%", "70%"],
           avoidLabelOverlap: true,
           itemStyle: {
@@ -193,39 +214,39 @@ export default {
             borderColor: "#fff",
             borderWidth: 1,
           },
-      label: {
-        show:true,
-        color: 'rgba(0, 0, 0, 0.2)'
-      },
-      labelLine: {
-                lineStyle: {
-          color: 'rgba(0, 0, 0, 0.1)'
-        },
-        smooth: 0.1,
-        length:10
-      },
+          label: {
+            show: true,
+            color: "rgba(0, 0, 0, 0.2)",
+          },
+          labelLine: {
+            lineStyle: {
+              color: "rgba(0, 0, 0, 0.1)",
+            },
+            smooth: 0.1,
+            length: 10,
+          },
           data: evmData,
         },
       ],
     };
 
     this.linksChartOptions = {
-        title: {
-    text: 'Links',
-    subtext: 'Current Total: '+this.overall.links.following,
-    left: 'center'
-  },
+      textStyle: {
+        fontFamily: "RockwellStd",
+      },
+      title: {
+        text: "Links",
+        subtext: "Current Total: " + this.overall.links.following,
+        left: "center",
+      },
       tooltip: {
         trigger: "axis",
       },
       xAxis: {
-        name: "Date",
         type: "time",
         min: historyData[0][0],
       },
-      yAxis: {
-        name: "",
-      },
+      yAxis: {},
       series: [
         {
           data: linksData,
@@ -239,7 +260,6 @@ export default {
         },
       ],
     };
-
 
     this.closeLoading();
   },
@@ -288,13 +308,22 @@ export default {
     //   await nextTick()
     //   this.closeLoading()
     // }
+    handleClick(e) {
+      window.open('https://github.com/NaturalSelectionLabs/RSS3-Network-Data-v0.2.0/tree/main/statistics');
+      this.$emit("onClick", e);
+    },
   },
 };
 </script>
 
 <style>
+@font-face {
+  font-family: "RockwellStd";
+  src: local("RockwellStd"),
+    url("./fonts/RockwellStd-Light.otf") format("OpenType");
+}
 * {
-  font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: "RockwellStd";
 }
 h1 {
   text-align: center;
