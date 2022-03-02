@@ -1,5 +1,6 @@
 <template>
   <h1>RSS3 Dashboard</h1>
+  <v-chart class="line-chart" :option="itemChartOptions" />
   <v-chart class="line-chart" :option="lineChartOptions" />
   <el-row  justify="center">
     <el-col :xs="24" :sm="12" >
@@ -109,13 +110,14 @@ export default {
         count: 0,
         links: {},
         assets: {},
-        // accounts: {}
+        items: {}
       },
       details: [],
       loading: null,
       lineChartOptions: null,
       evmPieChartOptions: null,
       linksChartOptions: null,
+      itemChartOptions: null
     };
   },
   async mounted() {
@@ -146,6 +148,12 @@ export default {
       }
     });
 
+    var itemData = [];
+    for (const [key, value] of Object.entries(this.overall.items)) {
+      if (key!=="totalCount") itemData.push({ value: value, name: key });
+    }
+
+
     const historyData = Object.values(dailyMax)
       .map((key) => [+new Date(key), history[key].count])
       .sort((a, b) => a[0] - b[0]);
@@ -158,6 +166,47 @@ export default {
     const linksData = Object.values(dailyMax)
       .map((key) => [+new Date(key), history[key].links.following])
       .sort((a, b) => a[0] - b[0]);
+
+    this.itemChartOptions = {
+      textStyle: {
+        fontFamily: "RockwellStd",
+      },
+      title: {
+        text: "RSS3 Items",
+        subtext: "Current Total: " + this.overall.items.totalCount,
+        left: "center",
+      },
+      tooltip: {
+        trigger: "item",
+      },
+      series: [
+        {
+          name: "EVM+ Assets",
+          type: "pie",
+          // radius: [100, 250],
+          radius: ["30%", "70%"],
+          avoidLabelOverlap: true,
+          itemStyle: {
+            borderRadius: 5,
+            borderColor: "#fff",
+            borderWidth: 1,
+          },
+          label: {
+            show: true,
+            color: "rgba(0, 0, 0, 0.2)",
+          },
+          labelLine: {
+            lineStyle: {
+              color: "rgba(0, 0, 0, 0.1)",
+            },
+            smooth: 0.1,
+            length: 10,
+          },
+          data: itemData,
+        },
+      ],
+    };
+
 
     this.lineChartOptions = {
       textStyle: {
