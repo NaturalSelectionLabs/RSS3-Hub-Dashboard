@@ -372,7 +372,7 @@ export default {
     //   this.closeLoading()
     // }
     handleClick(e) {
-      window.open('https://github.com/NaturalSelectionLabs/RSS3-Network-Data-v0.2.0/tree/main/statistics');
+      window.open('https://github.com/NaturalSelectionLabs/RSS3-Network-Data/tree/main/statics');
       this.$emit("onClick", e);
     },
   },
