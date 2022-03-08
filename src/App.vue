@@ -2,6 +2,7 @@
   <h1>RSS3 Dashboard</h1>
   <v-chart class="line-chart" :option="itemChartOptions" />
   <v-chart class="line-chart" :option="lineChartOptions" />
+   <v-chart class="line-chart" :option="reqChartOptions" />
   <el-row  justify="center">
     <el-col :xs="24" :sm="12" >
       <v-chart class="pie-chart" :option="evmPieChartOptions" />
@@ -75,7 +76,7 @@ import { ElRow, ElCol, ElLoading, ElButton } from "element-plus";
 import axios from "axios";
 import { use } from "echarts/core";
 import { CanvasRenderer } from "echarts/renderers";
-import { LineChart, PieChart } from "echarts/charts";
+import { LineChart, PieChart,BarChart } from "echarts/charts";
 import {
   TooltipComponent,
   GridComponent,
@@ -90,6 +91,7 @@ use([
   TooltipComponent,
   LineChart,
   PieChart,
+  BarChart,
   GridComponent,
   PolarComponent,
   TitleComponent,
@@ -117,7 +119,8 @@ export default {
       lineChartOptions: null,
       evmPieChartOptions: null,
       linksChartOptions: null,
-      itemChartOptions: null
+      itemChartOptions: null,
+      reqChartOptions: null
     };
   },
   async mounted() {
@@ -131,6 +134,12 @@ export default {
     const history = (
       await axios.get(
         "https://raw.githubusercontent.com/NaturalSelectionLabs/RSS3-PreNode-Data/main/statics/history.json"
+      )
+    ).data;
+
+    const reqData = (
+      await axios.get(
+        "https://dashboard-analytics.rss3.workers.dev/",     
       )
     ).data;
 
@@ -306,7 +315,7 @@ export default {
         axisLabel:{
           inside:true,
           margin: 0,
-          verticalAlign: "bottom"
+          verticalAlign: "bottom",
         }
       },
       series: [
@@ -322,6 +331,107 @@ export default {
           showSymbol: false,
         },
       ],
+    };
+
+    this.reqChartOptions = {
+            textStyle: {
+        fontFamily: "RockwellStd",
+      },
+            title: {
+        text: "RSS3 Network Requests",
+        subtext: "Over Past 24 Hours",
+        left: "center",
+      },
+  tooltip: {
+    trigger: 'axis',
+    axisPointer: {
+      type: 'none'
+    }
+  },
+    grid: [
+    { left: '10%', top: '12%', width: '35%', height: '75%' },
+    { right: '10%', top: '12%', width: '35%', height: '75%' },
+
+  ],
+  xAxis: [
+    {
+      gridIndex:0,
+      type: 'category',
+      data: ["Total Requests"],
+    axisTick: {
+      show: false
+    },
+    axisLine: {
+      show: false
+    }
+    },
+        {
+          gridIndex:1,
+      type: 'category',
+      data: ["Unique Users"],
+    axisTick: {
+      show: false
+    },
+    axisLine: {
+      show: false
+    }
+    },
+  ],
+  yAxis: [
+    { 
+      gridIndex:0,
+      type: 'value',
+              axisLabel:{
+          inside:true,
+          margin: 0,
+          verticalAlign: "bottom",
+          color: "rgba(0, 0, 0, 0.2)",
+          showMaxLabel: false
+        },
+            splitLine: {
+      show: false
+    }
+    },
+        {
+          gridIndex:1,
+      type: 'value',
+      position: 'right',
+              axisLabel:{
+          inside:true,
+          margin: 0,
+          verticalAlign: "bottom",
+          color: "rgba(0, 0, 0, 0.2)",
+          showMaxLabel: false
+        },
+            splitLine: {
+      show: false
+    }
+    }
+  ],
+  series: [
+    {
+            xAxisIndex: 0,
+      yAxisIndex: 0,
+      type: 'bar',
+      barWidth: '30%',
+      data: [reqData.requests],
+            label: {
+        show: true,
+        position: 'top'
+      },
+    },
+    {
+            xAxisIndex: 1,
+      yAxisIndex: 1,
+      type: 'bar',
+      barWidth: '30%',
+      data: [reqData.uniques],
+            label: {
+        show: true,
+        position: 'top'
+      },
+    }
+  ]
     };
 
     this.closeLoading();
