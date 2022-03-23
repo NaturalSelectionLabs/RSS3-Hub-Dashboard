@@ -3,20 +3,21 @@
   <v-chart class="line-chart" :option="itemChartOptions" />
   <v-chart class="line-chart" :option="lineChartOptions" />
    <v-chart class="line-chart" :option="reqChartOptions" />
-  <el-row  justify="center">
+  <!-- <el-row  justify="center">
     <el-col :xs="24" :sm="12" >
-      <v-chart class="pie-chart" :option="evmPieChartOptions" />
-    </el-col>
-    <el-col :xs="24" :sm="12">
-      <v-chart class="pie-chart" :option="linksChartOptions" />
+      
+    </el-col> -->
+    <v-chart class="pie-chart" :option="evmPieChartOptions" />
+    <!-- <el-col :xs="24" :sm="12"> -->
+      <!-- <v-chart class="pie-chart" :option="linksChartOptions" /> -->
       <!-- <div class="data-card">
           <h2>
             Links
           </h2>
           <span>Current Total: {{overall.links.following}}</span>
         </div> -->
-    </el-col>
-  </el-row>
+    <!-- </el-col> -->
+  <!-- </el-row> -->
   <el-row justify="center">
     <el-button @click="handleClick">View Raw Statistics</el-button>
   </el-row>
@@ -72,7 +73,7 @@
 
 <script>
 // import { nextTick } from 'vue'
-import { ElRow, ElCol, ElLoading, ElButton } from "element-plus";
+import { ElRow, ElLoading, ElButton } from "element-plus";
 import axios from "axios";
 import { use } from "echarts/core";
 import { CanvasRenderer } from "echarts/renderers";
@@ -102,7 +103,7 @@ export default {
   name: "App",
   components: {
     ElRow,
-    ElCol,
+    // ElCol,
     VChart,
     ElButton
   },
